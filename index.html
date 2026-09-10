@@ -16,7 +16,6 @@
     --critico: #d64545;
     --porhacer: #e0863f;
     --pendiente: #9a8c98;
-    --haciendo: #3b7dd8;
     --listo: #3f9d5c;
     --chip-bg: #eeece7;
   }
@@ -32,6 +31,11 @@
     padding: 20px 16px 12px;
     max-width: 960px;
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
   }
   h1 {
     font-size: 1.5rem;
@@ -42,21 +46,16 @@
     font-size: 0.9rem;
     margin: 0;
   }
-  .summary {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin: 14px 0 4px;
-  }
-  .summary-card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 10px;
+  #btn-nueva {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
     padding: 8px 14px;
     font-size: 0.85rem;
-    min-width: 90px;
+    font-weight: 600;
+    cursor: pointer;
   }
-  .summary-card b { display: block; font-size: 1.3rem; }
   .filters {
     max-width: 960px;
     margin: 10px auto 0;
@@ -80,10 +79,18 @@
     color: var(--accent-ink);
     border-color: var(--accent);
   }
-  main {
+  .seccion {
     max-width: 960px;
-    margin: 18px auto;
+    margin: 22px auto 0;
     padding: 0 16px;
+  }
+  .seccion-titulo {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .seccion-fila {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 14px;
@@ -92,10 +99,10 @@
     background: rgba(255,255,255,0.4);
     border-radius: 12px;
     padding: 10px;
-    min-height: 80px;
+    min-height: 60px;
   }
   .column h2 {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--muted);
@@ -117,8 +124,13 @@
   .task.estado-critico { border-left-color: var(--critico); }
   .task.estado-por-hacer { border-left-color: var(--porhacer); }
   .task.estado-pendiente { border-left-color: var(--pendiente); }
-  .task.estado-haciendo { border-left-color: var(--haciendo); }
   .task.estado-listo { border-left-color: var(--listo); opacity: 0.7; }
+  .task-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 6px;
+  }
   .task-title {
     font-weight: 600;
     font-size: 0.95rem;
@@ -143,13 +155,17 @@
     display: flex;
     gap: 6px;
   }
-  .task-actions button {
+  .task-actions button, .btn-icon {
     font-size: 0.72rem;
     border: 1px solid var(--line);
     background: #fff;
     border-radius: 6px;
     padding: 3px 8px;
     cursor: pointer;
+  }
+  .btn-icon {
+    padding: 2px 7px;
+    flex-shrink: 0;
   }
   .task-actions button.primary {
     background: var(--accent);
@@ -161,6 +177,92 @@
     font-size: 0.8rem;
     padding: 10px;
   }
+  /* --- colores de lugar (mismos que en Notion) --- */
+  .lugar-casa       { background: #eee3f8; color: #6940a5; }
+  .lugar-cocina     { background: #fdecc8; color: #97722e; }
+  .lugar-banos      { background: #dbeddb; color: #2f7e2f; }
+  .lugar-living     { background: #d3e5ef; color: #337ea9; }
+  .lugar-pieza      { background: #e9e5e3; color: #64473a; }
+  .lugar-logia      { background: #ffe2dd; color: #c4554d; }
+  .lugar-oficina    { background: #ebeced; color: #787774; }
+  .lugar-terraza    { background: #fadec9; color: #d9730d; }
+  .lugar-online     { background: #f1f1ef; color: #37352f; }
+  .lugar-bodega     { background: #f1f1ef; color: #37352f; }
+  /* --- formulario de edición --- */
+  .edit-form { display: flex; flex-direction: column; gap: 8px; }
+  .edit-form label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .edit-form input[type="text"],
+  .edit-form input[type="date"],
+  .edit-form select,
+  .edit-form textarea {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 5px 7px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--card);
+    color: var(--ink);
+    font-family: inherit;
+  }
+  .edit-form textarea { resize: vertical; min-height: 40px; }
+  .edit-row { display: flex; gap: 8px; }
+  .edit-row > div { flex: 1; }
+  .edit-check-group { display: flex; gap: 12px; font-size: 0.8rem; }
+  .edit-actions { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+  .edit-actions button {
+    font-size: 0.78rem;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .edit-actions button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .edit-actions button.danger { color: var(--critico); border-color: var(--critico); }
+  /* --- resumen por persona (al final) --- */
+  .resumen-final {
+    max-width: 960px;
+    margin: 34px auto 0;
+    padding: 0 16px;
+  }
+  .resumen-final h2 {
+    font-size: 0.95rem;
+    margin: 0 0 10px;
+  }
+  .resumen-personas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .resumen-persona {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .resumen-persona h3 {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+  }
+  .summary {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .summary-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    min-width: 74px;
+  }
+  .summary-card b { display: block; font-size: 1.2rem; }
   footer {
     max-width: 960px;
     margin: 30px auto;
@@ -186,15 +288,27 @@
       --chip-bg: #262b32;
     }
     .tag.overdue { background: #3a1f22; }
+    .lugar-casa       { background: #372e42; color: #d5b8f5; }
+    .lugar-cocina     { background: #40371f; color: #f0cf85; }
+    .lugar-banos      { background: #22331f; color: #9bd39b; }
+    .lugar-living     { background: #1f2e38; color: #8fc3e0; }
+    .lugar-pieza      { background: #33291f; color: #cbb09e; }
+    .lugar-logia      { background: #3a201d; color: #f0aca3; }
+    .lugar-oficina    { background: #2b2c2e; color: #b6b6b3; }
+    .lugar-terraza    { background: #3a2c1a; color: #f0b374; }
+    .lugar-online     { background: #262626; color: #cfcfcc; }
+    .lugar-bodega     { background: #262626; color: #cfcfcc; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🧹 Aseo del hogar</h1>
-  <p class="subtitle">Seb &amp; Soffi — tracker semanal</p>
-  <div class="summary" id="summary"></div>
+  <div>
+    <h1>🧹 Aseo del hogar</h1>
+    <p class="subtitle">Seb &amp; Soffi — tracker semanal</p>
+  </div>
+  <button id="btn-nueva">+ Nueva tarea</button>
 </header>
 
 <div class="filters" id="filtro-responsable"></div>
@@ -202,7 +316,20 @@
 
 <div id="status-banner"></div>
 
-<main id="board"></main>
+<div class="seccion">
+  <div class="seccion-titulo">Corto plazo (diaria / par de días / semanal)</div>
+  <div class="seccion-fila" id="fila-corto"></div>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">Largo plazo (mensual, trimestral, semestral, ocasional)</div>
+  <div class="seccion-fila" id="fila-largo"></div>
+</div>
+
+<div class="resumen-final">
+  <h2>Resumen por persona</h2>
+  <div class="resumen-personas" id="resumen-personas"></div>
+</div>
 
 <footer>Aseo del hogar · datos en Firebase Firestore · última actualización: <span id="last-update">—</span></footer>
 
@@ -227,28 +354,31 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const tareasRef = db.collection("tareas");
 
-const ESTADOS = ["Crítico", "Por hacer", "Pendiente", "Haciendo", "Listo"];
+const ESTADOS_EDITABLES = ["Crítico", "Por hacer", "Pendiente", "Listo"];
 const ESTADO_CLASS = {
   "Crítico": "estado-critico",
   "Por hacer": "estado-por-hacer",
   "Pendiente": "estado-pendiente",
-  "Haciendo": "estado-haciendo",
+  "Haciendo": "estado-por-hacer",
   "Listo": "estado-listo"
 };
-// Ciclo al hacer click en una tarea
-const SIGUIENTE_ESTADO = {
-  "Crítico": "Haciendo",
-  "Por hacer": "Haciendo",
-  "Pendiente": "Haciendo",
-  "Haciendo": "Listo",
-  "Listo": "Por hacer"
-};
-
+const FRECUENCIAS = ["Diaria", "Par de días", "Semanal", "Cada dos semanas", "Mensual", "Trimestral", "Semestral", "Ocasional"];
+const FRECUENCIAS_CORTO = ["Diaria", "Par de días", "Semanal", "Cada dos semanas"];
+const LUGARES = ["Casa", "Cocina", "Baños", "Living", "Pieza", "Logia", "Oficina", "Terraza", "Online", "Bodega"];
 const RESPONSABLES = ["Seb", "Soffi"];
+
+function lugarClass(lugar) {
+  if (!lugar) return "";
+  const map = { "Casa":"lugar-casa", "Cocina":"lugar-cocina", "Baños":"lugar-banos", "Living":"lugar-living",
+    "Pieza":"lugar-pieza", "Logia":"lugar-logia", "Oficina":"lugar-oficina", "Terraza":"lugar-terraza",
+    "Online":"lugar-online", "Bodega":"lugar-bodega" };
+  return map[lugar] || "";
+}
 
 let filtroResponsable = "Todos";
 let filtroLugar = "Todos";
 let tareasCache = [];
+let editingId = null; // id de la tarea actualmente en modo edición ("nueva" para una tarea recién creada)
 
 function fmtFecha(iso) {
   if (!iso) return null;
@@ -267,8 +397,8 @@ function esAtrasada(t) {
 
 function render() {
   renderFiltros();
-  renderResumen();
-  renderBoard();
+  renderSecciones();
+  renderResumenPersonas();
 }
 
 function renderFiltros() {
@@ -309,55 +439,77 @@ function tareasFiltradas() {
   });
 }
 
-function renderResumen() {
+function renderSecciones() {
   const tf = tareasFiltradas();
-  const atrasadas = tf.filter(esAtrasada).length;
-  const criticas = tf.filter(t => t.estado === "Crítico").length;
-  const listas = tf.filter(t => t.estado === "Listo").length;
-  const total = tf.length;
-  document.getElementById("summary").innerHTML = `
-    <div class="summary-card"><b>${total}</b>tareas</div>
-    <div class="summary-card"><b>${listas}</b>listas</div>
-    <div class="summary-card"><b>${criticas}</b>críticas</div>
-    <div class="summary-card"><b>${atrasadas}</b>atrasadas</div>
-  `;
+  const corto = tf.filter(t => FRECUENCIAS_CORTO.includes(t.frecuencia));
+  const largo = tf.filter(t => !FRECUENCIAS_CORTO.includes(t.frecuencia));
+  renderFila("fila-corto", corto);
+  renderFila("fila-largo", largo);
 }
 
-function renderBoard() {
-  const board = document.getElementById("board");
-  const tf = tareasFiltradas();
+function renderFila(elId, tareas) {
+  const cont = document.getElementById(elId);
 
-  const grupos = {
-    "Por hacer": tf.filter(t => ["Crítico", "Por hacer", "Pendiente"].includes(t.estado)),
-    "Haciendo": tf.filter(t => t.estado === "Haciendo"),
-    "Listo": tf.filter(t => t.estado === "Listo"),
-  };
+  const porHacer = tareas.filter(t => t.estado !== "Listo");
+  const listas = tareas.filter(t => t.estado === "Listo");
 
-  // orden: críticas y atrasadas primero dentro de "Por hacer"
-  grupos["Por hacer"].sort((a, b) => {
+  porHacer.sort((a, b) => {
     const score = t => (t.estado === "Crítico" ? 0 : 1) - (esAtrasada(t) ? 1 : 0);
     return score(a) - score(b);
   });
 
-  board.innerHTML = Object.entries(grupos).map(([titulo, tareas]) => `
+  const grupos = { "Por hacer": porHacer, "Listo": listas };
+
+  cont.innerHTML = Object.entries(grupos).map(([titulo, ts]) => `
     <div class="column">
-      <h2>${titulo} <span>${tareas.length}</span></h2>
-      ${tareas.length ? tareas.map(cardHtml).join("") : `<div class="empty-msg">Nada aquí 🎉</div>`}
+      <h2>${titulo} <span>${ts.length}</span></h2>
+      ${ts.length ? ts.map(cardOrForm).join("") : `<div class="empty-msg">Nada aquí 🎉</div>`}
     </div>
   `).join("");
 
-  board.querySelectorAll(".task").forEach(el => {
+  cont.querySelectorAll(".task").forEach(el => {
     el.addEventListener("click", (e) => {
-      if (e.target.closest("button")) return;
+      if (e.target.closest("button, input, select, textarea, label")) return;
       avanzarEstado(el.dataset.id);
     });
   });
-  board.querySelectorAll("[data-action='reabrir']").forEach(btn => {
+  cont.querySelectorAll("[data-action='reabrir']").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       cambiarEstado(btn.dataset.id, "Por hacer");
     });
   });
+  cont.querySelectorAll("[data-action='editar']").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      editingId = btn.dataset.id;
+      render();
+    });
+  });
+  cont.querySelectorAll("[data-action='cancelar-edicion']").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      editingId = null;
+      render();
+    });
+  });
+  cont.querySelectorAll("[data-action='guardar']").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      guardarEdicion(btn.dataset.id);
+    });
+  });
+  cont.querySelectorAll("[data-action='eliminar']").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (confirm("¿Eliminar esta tarea?")) eliminarTarea(btn.dataset.id);
+    });
+  });
+}
+
+function cardOrForm(t) {
+  if (t.id === editingId) return formEdicionHtml(t);
+  return cardHtml(t);
 }
 
 function cardHtml(t) {
@@ -366,12 +518,14 @@ function cardHtml(t) {
   const fecha = fmtFecha(t.fecha);
   return `
     <div class="task ${cls}" data-id="${t.id}">
-      <div class="task-title">${t.tarea}</div>
+      <div class="task-title-row">
+        <div class="task-title">${t.tarea || "(sin nombre)"}</div>
+        <button class="btn-icon" data-action="editar" data-id="${t.id}" title="Editar">✎</button>
+      </div>
       <div class="task-meta">
-        ${t.lugar ? `<span class="tag">${t.lugar}</span>` : ""}
+        ${t.lugar ? `<span class="tag ${lugarClass(t.lugar)}">${t.lugar}</span>` : ""}
         ${t.frecuencia ? `<span class="tag">${t.frecuencia}</span>` : ""}
         ${(t.responsable || []).map(r => `<span class="tag">${r}</span>`).join("")}
-        ${t.duracionMin ? `<span class="tag">${t.duracionMin} min</span>` : ""}
         ${fecha ? `<span class="tag ${atrasada ? "overdue" : ""}">${atrasada ? "atrasada · " : ""}${fecha}</span>` : ""}
       </div>
       ${t.estado === "Listo" ? `<div class="task-actions"><button data-action="reabrir" data-id="${t.id}">Reabrir</button></div>` : ""}
@@ -379,17 +533,134 @@ function cardHtml(t) {
   `;
 }
 
+function formEdicionHtml(t) {
+  const resp = t.responsable || [];
+  return `
+    <div class="task" data-id="${t.id}">
+      <div class="edit-form">
+        <div>
+          <label>Tarea</label>
+          <input type="text" data-f="tarea" value="${(t.tarea || "").replace(/"/g, "&quot;")}" />
+        </div>
+        <div class="edit-row">
+          <div>
+            <label>Estado</label>
+            <select data-f="estado">
+              ${ESTADOS_EDITABLES.map(e => `<option value="${e}" ${t.estado === e ? "selected" : ""}>${e}</option>`).join("")}
+            </select>
+          </div>
+          <div>
+            <label>Frecuencia</label>
+            <select data-f="frecuencia">
+              ${FRECUENCIAS.map(f => `<option value="${f}" ${t.frecuencia === f ? "selected" : ""}>${f}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+        <div class="edit-row">
+          <div>
+            <label>Lugar</label>
+            <select data-f="lugar">
+              <option value="">Sin lugar</option>
+              ${LUGARES.map(l => `<option value="${l}" ${t.lugar === l ? "selected" : ""}>${l}</option>`).join("")}
+            </select>
+          </div>
+          <div>
+            <label>Fecha</label>
+            <input type="date" data-f="fecha" value="${t.fecha || ""}" />
+          </div>
+        </div>
+        <div>
+          <label>Responsable</label>
+          <div class="edit-check-group">
+            ${RESPONSABLES.map(r => `
+              <label><input type="checkbox" data-f="resp" value="${r}" ${resp.includes(r) ? "checked" : ""}> ${r}</label>
+            `).join("")}
+          </div>
+        </div>
+        <div>
+          <label>Notas</label>
+          <textarea data-f="notas">${t.notas || ""}</textarea>
+        </div>
+        <div class="edit-actions">
+          <button class="primary" data-action="guardar" data-id="${t.id}">Guardar</button>
+          <button data-action="cancelar-edicion" data-id="${t.id}">Cancelar</button>
+          <button class="danger" data-action="eliminar" data-id="${t.id}">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function guardarEdicion(id) {
+  const card = document.querySelector(`.task[data-id="${id}"]`);
+  if (!card) return;
+  const get = sel => card.querySelector(sel);
+  const resp = Array.from(card.querySelectorAll('[data-f="resp"]:checked')).map(c => c.value);
+  const cambios = {
+    tarea: get('[data-f="tarea"]').value.trim(),
+    estado: get('[data-f="estado"]').value,
+    frecuencia: get('[data-f="frecuencia"]').value,
+    lugar: get('[data-f="lugar"]').value || null,
+    fecha: get('[data-f="fecha"]').value || null,
+    notas: get('[data-f="notas"]').value,
+    responsable: resp
+  };
+  tareasRef.doc(id).update(cambios).then(() => {
+    editingId = null;
+  }).catch(err => mostrarError("No se pudo guardar: " + err.message));
+}
+
+function eliminarTarea(id) {
+  tareasRef.doc(id).delete().catch(err => mostrarError("No se pudo eliminar: " + err.message));
+}
+
+function nuevaTarea() {
+  tareasRef.add({
+    tarea: "Nueva tarea",
+    estado: "Por hacer",
+    frecuencia: "Semanal",
+    lugar: null,
+    fecha: null,
+    notas: "",
+    responsable: []
+  }).then(ref => {
+    editingId = ref.id;
+  }).catch(err => mostrarError("No se pudo crear la tarea: " + err.message));
+}
+
 function avanzarEstado(id) {
   const t = tareasCache.find(x => x.id === id);
   if (!t) return;
-  const siguiente = SIGUIENTE_ESTADO[t.estado] || "Por hacer";
-  cambiarEstado(id, siguiente);
+  cambiarEstado(id, t.estado === "Listo" ? "Por hacer" : "Listo");
 }
 
 function cambiarEstado(id, nuevoEstado) {
   tareasRef.doc(id).update({ estado: nuevoEstado }).catch(err => {
     mostrarError("No se pudo guardar el cambio: " + err.message);
   });
+}
+
+function renderResumenPersonas() {
+  const tf = tareasFiltradas();
+  const cont = document.getElementById("resumen-personas");
+  cont.innerHTML = RESPONSABLES.map(persona => {
+    const propias = tf.filter(t => (t.responsable || []).includes(persona));
+    const total = propias.length;
+    const listas = propias.filter(t => t.estado === "Listo").length;
+    const criticas = propias.filter(t => t.estado === "Crítico").length;
+    const atrasadas = propias.filter(esAtrasada).length;
+    return `
+      <div class="resumen-persona">
+        <h3>${persona}</h3>
+        <div class="summary">
+          <div class="summary-card"><b>${total}</b>tareas</div>
+          <div class="summary-card"><b>${listas}</b>listas</div>
+          <div class="summary-card"><b>${criticas}</b>críticas</div>
+          <div class="summary-card"><b>${atrasadas}</b>atrasadas</div>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function mostrarError(msg) {
@@ -409,6 +680,8 @@ function suscribirse() {
     mostrarError("Sin conexión a la base de datos: " + err.message);
   });
 }
+
+document.getElementById("btn-nueva").addEventListener("click", nuevaTarea);
 
 /* =========================================================
    SEED: carga los datos migrados desde Notion la primera vez
