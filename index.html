@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aseo del hogar</title>
+<style>
+  :root {
+    --bg: #f6f5f3;
+    --card: #ffffff;
+    --ink: #1f2430;
+    --muted: #6b7280;
+    --line: #e6e4e0;
+    --accent: #3b6e5e;
+    --accent-ink: #ffffff;
+    --critico: #d64545;
+    --porhacer: #e0863f;
+    --pendiente: #9a8c98;
+    --haciendo: #3b7dd8;
+    --listo: #3f9d5c;
+    --chip-bg: #eeece7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding-bottom: 60px;
+  }
+  header {
+    padding: 20px 16px 12px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .summary {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 14px 0 4px;
+  }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    min-width: 90px;
+  }
+  .summary-card b { display: block; font-size: 1.3rem; }
+  .filters {
+    max-width: 960px;
+    margin: 10px auto 0;
+    padding: 0 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--chip-bg);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  .chip.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  main {
+    max-width: 960px;
+    margin: 18px auto;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .column {
+    background: rgba(255,255,255,0.4);
+    border-radius: 12px;
+    padding: 10px;
+    min-height: 80px;
+  }
+  .column h2 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 4px 6px 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .task {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--pendiente);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+  }
+  .task:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .task.estado-critico { border-left-color: var(--critico); }
+  .task.estado-por-hacer { border-left-color: var(--porhacer); }
+  .task.estado-pendiente { border-left-color: var(--pendiente); }
+  .task.estado-haciendo { border-left-color: var(--haciendo); }
+  .task.estado-listo { border-left-color: var(--listo); opacity: 0.7; }
+  .task-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+  .task.estado-listo .task-title { text-decoration: line-through; }
+  .task-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .tag {
+    background: var(--chip-bg);
+    border-radius: 6px;
+    padding: 2px 6px;
+  }
+  .tag.overdue { background: #fbe2e2; color: var(--critico); font-weight: 600; }
+  .task-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+  }
+  .task-actions button {
+    font-size: 0.72rem;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 6px;
+    padding: 3px 8px;
+    cursor: pointer;
+  }
+  .task-actions button.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .empty-msg {
+    color: var(--muted);
+    font-size: 0.8rem;
+    padding: 10px;
+  }
+  footer {
+    max-width: 960px;
+    margin: 30px auto;
+    padding: 0 16px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    text-align: center;
+  }
+  #status-banner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+  #status-banner.error { color: var(--critico); }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15181d;
+      --card: #1e2229;
+      --ink: #eceef0;
+      --muted: #9aa1ab;
+      --line: #2b2f36;
+      --chip-bg: #262b32;
+    }
+    .tag.overdue { background: #3a1f22; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧹 Aseo del hogar</h1>
+  <p class="subtitle">Seb &amp; Soffi — tracker semanal</p>
+  <div class="summary" id="summary"></div>
+</header>
+
+<div class="filters" id="filtro-responsable"></div>
+<div class="filters" id="filtro-lugar"></div>
+
+<div id="status-banner"></div>
+
+<main id="board"></main>
+
+<footer>Aseo del hogar · datos en Firebase Firestore · última actualización: <span id="last-update">—</span></footer>
+
+<!-- Firebase (compat SDK, simple <script> usage) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* =========================================================
+   CONFIGURA AQUÍ tu proyecto de Firebase (ver README.md)
+   ========================================================= */
+const firebaseConfig = {
+  apiKey: "REEMPLAZAR",
+  authDomain: "REEMPLAZAR.firebaseapp.com",
+  projectId: "REEMPLAZAR",
+  storageBucket: "REEMPLAZAR.appspot.com",
+  messagingSenderId: "REEMPLAZAR",
+  appId: "REEMPLAZAR"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const tareasRef = db.collection("tareas");
+
+const ESTADOS = ["Crítico", "Por hacer", "Pendiente", "Haciendo", "Listo"];
+const ESTADO_CLASS = {
+  "Crítico": "estado-critico",
+  "Por hacer": "estado-por-hacer",
+  "Pendiente": "estado-pendiente",
+  "Haciendo": "estado-haciendo",
+  "Listo": "estado-listo"
+};
+// Ciclo al hacer click en una tarea
+const SIGUIENTE_ESTADO = {
+  "Crítico": "Haciendo",
+  "Por hacer": "Haciendo",
+  "Pendiente": "Haciendo",
+  "Haciendo": "Listo",
+  "Listo": "Por hacer"
+};
+
+const RESPONSABLES = ["Seb", "Soffi"];
+
+let filtroResponsable = "Todos";
+let filtroLugar = "Todos";
+let tareasCache = [];
+
+function fmtFecha(iso) {
+  if (!iso) return null;
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("es-CL", { day: "2-digit", month: "short" });
+}
+
+function esAtrasada(t) {
+  if (!t.fecha) return false;
+  if (t.estado === "Listo") return false;
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  const f = new Date(t.fecha + "T00:00:00");
+  return f < hoy;
+}
+
+function render() {
+  renderFiltros();
+  renderResumen();
+  renderBoard();
+}
+
+function renderFiltros() {
+  const respEl = document.getElementById("filtro-responsable");
+  const lugares = ["Todos", ...new Set(tareasCache.map(t => t.lugar).filter(Boolean))];
+  const responsables = ["Todos", ...RESPONSABLES, "Ambos"];
+
+  respEl.innerHTML = responsables.map(r =>
+    `<button class="chip ${filtroResponsable === r ? "active" : ""}" data-tipo="resp" data-val="${r}">${r}</button>`
+  ).join("");
+
+  const lugarEl = document.getElementById("filtro-lugar");
+  lugarEl.innerHTML = lugares.map(l =>
+    `<button class="chip ${filtroLugar === l ? "active" : ""}" data-tipo="lugar" data-val="${l}">${l}</button>`
+  ).join("");
+
+  document.querySelectorAll(".chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.tipo === "resp") filtroResponsable = btn.dataset.val;
+      else filtroLugar = btn.dataset.val;
+      render();
+    });
+  });
+}
+
+function tareasFiltradas() {
+  return tareasCache.filter(t => {
+    if (filtroLugar !== "Todos" && t.lugar !== filtroLugar) return false;
+    if (filtroResponsable !== "Todos") {
+      const resp = t.responsable || [];
+      if (filtroResponsable === "Ambos") {
+        if (resp.length < 2) return false;
+      } else if (!resp.includes(filtroResponsable)) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+function renderResumen() {
+  const tf = tareasFiltradas();
+  const atrasadas = tf.filter(esAtrasada).length;
+  const criticas = tf.filter(t => t.estado === "Crítico").length;
+  const listas = tf.filter(t => t.estado === "Listo").length;
+  const total = tf.length;
+  document.getElementById("summary").innerHTML = `
+    <div class="summary-card"><b>${total}</b>tareas</div>
+    <div class="summary-card"><b>${listas}</b>listas</div>
+    <div class="summary-card"><b>${criticas}</b>críticas</div>
+    <div class="summary-card"><b>${atrasadas}</b>atrasadas</div>
+  `;
+}
+
+function renderBoard() {
+  const board = document.getElementById("board");
+  const tf = tareasFiltradas();
+
+  const grupos = {
+    "Por hacer": tf.filter(t => ["Crítico", "Por hacer", "Pendiente"].includes(t.estado)),
+    "Haciendo": tf.filter(t => t.estado === "Haciendo"),
+    "Listo": tf.filter(t => t.estado === "Listo"),
+  };
+
+  // orden: críticas y atrasadas primero dentro de "Por hacer"
+  grupos["Por hacer"].sort((a, b) => {
+    const score = t => (t.estado === "Crítico" ? 0 : 1) - (esAtrasada(t) ? 1 : 0);
+    return score(a) - score(b);
+  });
+
+  board.innerHTML = Object.entries(grupos).map(([titulo, tareas]) => `
+    <div class="column">
+      <h2>${titulo} <span>${tareas.length}</span></h2>
+      ${tareas.length ? tareas.map(cardHtml).join("") : `<div class="empty-msg">Nada aquí 🎉</div>`}
+    </div>
+  `).join("");
+
+  board.querySelectorAll(".task").forEach(el => {
+    el.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
+      avanzarEstado(el.dataset.id);
+    });
+  });
+  board.querySelectorAll("[data-action='reabrir']").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      cambiarEstado(btn.dataset.id, "Por hacer");
+    });
+  });
+}
+
+function cardHtml(t) {
+  const cls = ESTADO_CLASS[t.estado] || "";
+  const atrasada = esAtrasada(t);
+  const fecha = fmtFecha(t.fecha);
+  return `
+    <div class="task ${cls}" data-id="${t.id}">
+      <div class="task-title">${t.tarea}</div>
+      <div class="task-meta">
+        ${t.lugar ? `<span class="tag">${t.lugar}</span>` : ""}
+        ${t.frecuencia ? `<span class="tag">${t.frecuencia}</span>` : ""}
+        ${(t.responsable || []).map(r => `<span class="tag">${r}</span>`).join("")}
+        ${t.duracionMin ? `<span class="tag">${t.duracionMin} min</span>` : ""}
+        ${fecha ? `<span class="tag ${atrasada ? "overdue" : ""}">${atrasada ? "atrasada · " : ""}${fecha}</span>` : ""}
+      </div>
+      ${t.estado === "Listo" ? `<div class="task-actions"><button data-action="reabrir" data-id="${t.id}">Reabrir</button></div>` : ""}
+    </div>
+  `;
+}
+
+function avanzarEstado(id) {
+  const t = tareasCache.find(x => x.id === id);
+  if (!t) return;
+  const siguiente = SIGUIENTE_ESTADO[t.estado] || "Por hacer";
+  cambiarEstado(id, siguiente);
+}
+
+function cambiarEstado(id, nuevoEstado) {
+  tareasRef.doc(id).update({ estado: nuevoEstado }).catch(err => {
+    mostrarError("No se pudo guardar el cambio: " + err.message);
+  });
+}
+
+function mostrarError(msg) {
+  const el = document.getElementById("status-banner");
+  el.textContent = msg;
+  el.className = "error";
+}
+
+function suscribirse() {
+  tareasRef.onSnapshot(snap => {
+    tareasCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    document.getElementById("last-update").textContent = new Date().toLocaleString("es-CL");
+    document.getElementById("status-banner").textContent = "";
+    document.getElementById("status-banner").className = "";
+    render();
+  }, err => {
+    mostrarError("Sin conexión a la base de datos: " + err.message);
+  });
+}
+
+/* =========================================================
+   SEED: carga los datos migrados desde Notion la primera vez
+   (solo corre si la colección "tareas" está vacía)
+   ========================================================= */
+const SEED_TAREAS = [{"tarea": "Lavar en lavaplatos", "estado": "Listo", "frecuencia": "Diaria", "lugar": "Cocina", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Guardar lavavajillas", "estado": "Listo", "frecuencia": "Diaria", "lugar": "Cocina", "responsable": ["Seb"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Cargar lavavajillas", "estado": "Por hacer", "frecuencia": "Diaria", "lugar": "Cocina", "responsable": ["Soffi", "Seb"], "fecha": null, "duracionMin": 20, "notas": ""}, {"tarea": "Limpieza cocina", "estado": "Listo", "frecuencia": "Diaria", "lugar": "Cocina", "responsable": ["Soffi"], "fecha": null, "duracionMin": 20, "notas": "Según planilla: responsable Soffi"}, {"tarea": "Orden general cosas", "estado": "Listo", "frecuencia": "Diaria", "lugar": "Living", "responsable": ["Seb"], "fecha": null, "duracionMin": 10, "notas": ""}, {"tarea": "Sacar eufy", "estado": "Listo", "frecuencia": "Diaria", "lugar": "Living", "responsable": ["Seb"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Trapear cocina", "estado": "Por hacer", "frecuencia": "Par de días", "lugar": "Cocina", "responsable": ["Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Sacar polvo", "estado": "Listo", "frecuencia": "Par de días", "lugar": "Casa", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Botar basura", "estado": "Listo", "frecuencia": "Par de días", "lugar": "Cocina", "responsable": ["Seb"], "fecha": null, "duracionMin": 10, "notas": "Según planilla: responsable Soffi"}, {"tarea": "Repasada baños", "estado": "Listo", "frecuencia": "Par de días", "lugar": "Baños", "responsable": ["Seb"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Limpiar superficies", "estado": "Listo", "frecuencia": "Semanal", "lugar": "Casa", "responsable": ["Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Sacar polvo profundo", "estado": "Por hacer", "frecuencia": "Semanal", "lugar": "Casa", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": 30, "notas": "Según planilla: responsable Soffi"}, {"tarea": "Cambiar sábanas", "estado": "Por hacer", "frecuencia": "Semanal", "lugar": "Pieza", "responsable": ["Soffi", "Seb"], "fecha": null, "duracionMin": 5, "notas": "Según planilla: responsable Otro"}, {"tarea": "Aseo profundo baños", "estado": "Por hacer", "frecuencia": "Semanal", "lugar": "Baños", "responsable": ["Seb"], "fecha": null, "duracionMin": 30, "notas": "Según planilla: responsable Otro"}, {"tarea": "Aspirar general", "estado": "Listo", "frecuencia": "Semanal", "lugar": "Casa", "responsable": ["Soffi", "Seb"], "fecha": null, "duracionMin": 30, "notas": "Según planilla: responsable Otro"}, {"tarea": "Trapear pisos", "estado": "Por hacer", "frecuencia": "Semanal", "lugar": "Living", "responsable": ["Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Lavar ropa", "estado": "Listo", "frecuencia": "Semanal", "lugar": "Logia", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": 60, "notas": "Según planilla: responsable Soffi"}, {"tarea": "Trapear baños", "estado": "Listo", "frecuencia": "Semanal", "lugar": null, "responsable": ["Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Regar plantas", "estado": "Por hacer", "frecuencia": "Semanal", "lugar": "Terraza", "responsable": ["Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Sacar polvo en altura", "estado": "Listo", "frecuencia": "Mensual", "lugar": "Casa", "responsable": ["Seb"], "fecha": null, "duracionMin": 60, "notas": "Frecuencia original: Trimestral. Según planilla: responsable Soffi"}, {"tarea": "Limpiar refri", "estado": "Listo", "frecuencia": "Mensual", "lugar": "Cocina", "responsable": ["Soffi"], "fecha": null, "duracionMin": 30, "notas": "Según planilla: responsable Otro"}, {"tarea": "Limpiar terraza", "estado": "Listo", "frecuencia": "Mensual", "lugar": "Terraza", "responsable": ["Seb"], "fecha": null, "duracionMin": 45, "notas": "Según planilla: responsable Otro"}, {"tarea": "Limpiar paredes y guardapolvos", "estado": "Pendiente", "frecuencia": "Semestral", "lugar": "Casa", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Limpiar parrilla", "estado": "Pendiente", "frecuencia": "Semestral", "lugar": "Terraza", "responsable": ["Seb"], "fecha": null, "duracionMin": 30, "notas": "Según planilla: responsable Seba"}, {"tarea": "Espejo baños", "estado": "Listo", "frecuencia": "Semanal", "lugar": null, "responsable": ["Soffi"], "fecha": null, "duracionMin": null, "notas": ""}, {"tarea": "Limpiar ventanal pieza", "estado": "Pendiente", "frecuencia": "Semestral", "lugar": "Terraza", "responsable": ["Soffi"], "fecha": "2026-03-17", "duracionMin": 45, "notas": "Según planilla: responsable Soffi"}, {"tarea": "Rotar colchón", "estado": "Pendiente", "frecuencia": "Semestral", "lugar": "Pieza", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": 20, "notas": "Frecuencia original: Trimestral. Según planilla: responsable Seba"}, {"tarea": "Limpiar electrodomésticos", "estado": "Pendiente", "frecuencia": "Semestral", "lugar": "Cocina", "responsable": ["Seb", "Soffi"], "fecha": null, "duracionMin": null, "notas": ""}];
+
+async function seedSiVacio() {
+  const snap = await tareasRef.limit(1).get();
+  if (!snap.empty) return;
+  const batch = db.batch();
+  SEED_TAREAS.forEach(t => {
+    const ref = tareasRef.doc();
+    batch.set(ref, t);
+  });
+  await batch.commit();
+}
+
+seedSiVacio()
+  .catch(err => mostrarError("Error al inicializar datos: " + err.message))
+  .finally(suscribirse);
+</script>
+</body>
+</html>
